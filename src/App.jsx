@@ -1,0 +1,28 @@
+import { Routes,Route } from "react-router-dom"
+import Navbar from "./components/Navbar"
+import Home from "./pages/Home"
+import CreateProject from "./pages/Createproject";
+import Login from "./pages/Login"
+import Signup from "./pages/Signup"
+import Explore from "./pages/Explore";
+
+
+function App() {
+  
+  return (
+  <>
+  <Navbar/>
+    <Routes>
+      <Route path="/" element={<Home/>}/>  
+      <Route path="/login" element={<Login/>}/> 
+      <Route path="/signup" element={<Signup/>}/> 
+      <Route path="/create" element={<CreateProject/>} />
+      <Route path="/explore" element={<Explore/>} />
+     </Routes>
+</>
+     
+   
+  )
+}
+
+export default App
