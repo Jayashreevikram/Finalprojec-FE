@@ -1,10 +1,10 @@
-import React from "react";
 import { Navigate } from "react-router-dom";
+import { auth } from "../firebase";
 
 const RequireAuth = ({ children }) => {
-  const token = localStorage.getItem("peer_token");
+  const user = auth.currentUser;
 
-  if (!token) {
+  if (!user) {
     return <Navigate to="/login" replace />;
   }
 

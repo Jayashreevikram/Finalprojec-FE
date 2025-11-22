@@ -21,7 +21,7 @@ const Home = () => {
           Explore Projects
         </Link>
         <Link
-          to="/create"
+          to="/createproject"
           className="bg-white border border-blue-600 text-blue-600 px-6 py-3 
           rounded-lg shadow hover:bg-blue-50">
           Create Project

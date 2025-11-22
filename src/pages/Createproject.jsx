@@ -29,7 +29,8 @@ const CreateProject = () => {
         title: form.title,
         description: form.description,
         github: form.github,
-        tags: form.tags.split(",").map((t) => t.trim()),
+        techStack: form.tags.split(",").map(t => t.trim())
+,
       },
       {
         headers: {
