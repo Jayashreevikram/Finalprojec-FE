@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import {useNavigate, Link } from "react-router-dom";
-import Login from "./Login";
-
+import { useNavigate, Link } from "react-router-dom";
+import { getAuth, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { app } from "../firebase";
+import { API } from "../utils/api";
 
 const Signup = () => {
   const [form, setForm] = useState({
@@ -13,37 +14,49 @@ const Signup = () => {
 
   const navigate = useNavigate();
 
- 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
- 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    
-    if (!form.name || !form.email || !form.password || !form.confirmPassword) {
-      alert("⚠️ Please fill in all fields.");
-      return;
-    }
-
     if (form.password !== form.confirmPassword) {
-      alert("❌ Passwords do not match!");
+      alert("Passwords do not match");
       return;
     }
 
-    
-    const userData = {
-      name: form.name,
-      email: form.email,
-      password: form.password,
-    };
+    try {
+      const auth = getAuth(app);
 
-    localStorage.setItem("peer_user", JSON.stringify(userData));
-    alert("✅ Account created successfully!");
+      // Firebase signup
+      const userCred = await createUserWithEmailAndPassword(
+        auth,
+        form.email,
+        form.password
+      );
 
-    navigate("/signin");
+      // Save name in Firebase Auth
+      await updateProfile(userCred.user, { displayName: form.name });
+
+      const token = await userCred.user.getIdToken();
+
+await API.post(
+  "/api/user/signup",
+  {},
+  {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  }
+);
+
+
+      alert("Account created!");
+      navigate("/login");
+    } catch (err) {
+      alert(err.message);
+    }
   };
 
   return (
@@ -54,79 +67,59 @@ const Signup = () => {
         </h2>
 
         <form onSubmit={handleSubmit}>
-         
-          <div className="mb-4">
-            <label className="block text-gray-700 font-semibold mb-2">
-              Full Name
-            </label>
-            <input
-              type="text"
-              name="name"
-              placeholder="Enter your name"
-              value={form.name}
-              onChange={handleChange}
-              className="w-full border border-gray-300 p-2 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none"
-            />
-          </div>
+          {/* Name */}
+          <input
+            type="text"
+            name="name"
+            placeholder="Full Name"
+            value={form.name}
+            onChange={handleChange}
+            className="w-full border p-2 mb-4 rounded"
+          />
 
-          
-          <div className="mb-4">
-            <label className="block text-gray-700 font-semibold mb-2">
-              Email
-            </label>
-            <input
-              type="email"
-              name="email"
-              placeholder="Enter your email"
-              value={form.email}
-              onChange={handleChange}
-              className="w-full border border-gray-300 p-2 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none"
-            />
-          </div>
+          {/* Email */}
+          <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            value={form.email}
+            onChange={handleChange}
+            className="w-full border p-2 mb-4 rounded"
+          />
 
-          <div className="mb-4">
-            <label className="block text-gray-700 font-semibold mb-2">
-              Password
-            </label>
-            <input
-              type="password"
-              name="password"
-              placeholder="Enter password"
-              value={form.password}
-              onChange={handleChange}
-              className="w-full border border-gray-300 p-2 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none"
-            />
-          </div>
+          {/* Password */}
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            value={form.password}
+            onChange={handleChange}
+            className="w-full border p-2 mb-4 rounded"
+          />
 
- 
-          <div className="mb-6">
-            <label className="block text-gray-700 font-semibold mb-2">
-              Confirm Password
-            </label>
-            <input
-              type="password"
-              name="confirmPassword"
-              placeholder="Confirm password"
-              value={form.confirmPassword}
-              onChange={handleChange}
-              className="w-full border border-gray-300 p-2 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none"
-            />
-          </div>
+          {/* Confirm Password */}
+          <input
+            type="password"
+            name="confirmPassword"
+            placeholder="Confirm Password"
+            value={form.confirmPassword}
+            onChange={handleChange}
+            className="w-full border p-2 mb-4 rounded"
+          />
 
-         
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700 transition duration-300"
+            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
           >
             Sign Up
           </button>
         </form>
 
         <p className="text-center text-gray-600 text-sm mt-4">
-          Already have an account?{" "}
-          <a href="/login" className="text-blue-600 hover:underline">
+          Already have an account?
+          <Link to="/login" className="text-blue-600 hover:underline">
             Sign In
-          </a>
+          </Link>
         </p>
       </div>
     </div>

@@ -5,6 +5,11 @@ import CreateProject from "./pages/Createproject";
 import Login from "./pages/Login"
 import Signup from "./pages/Signup"
 import Explore from "./pages/Explore";
+import RequireAuth from "./components/RequireAuth";
+
+
+
+
 
 
 function App() {
@@ -16,8 +21,24 @@ function App() {
       <Route path="/" element={<Home/>}/>  
       <Route path="/login" element={<Login/>}/> 
       <Route path="/signup" element={<Signup/>}/> 
-      <Route path="/create" element={<CreateProject/>} />
-      <Route path="/explore" element={<Explore/>} />
+      <Route
+  path="/createproject"
+  element={
+    <RequireAuth>
+      <CreateProject />
+    </RequireAuth>
+  }
+/>
+
+<Route
+  path="/explore"
+  element={
+    <RequireAuth>
+      <Explore />
+    </RequireAuth>
+  }
+/>
+
      </Routes>
 </>
      

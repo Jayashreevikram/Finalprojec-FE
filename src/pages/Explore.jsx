@@ -1,34 +1,77 @@
 import React, { useEffect, useState } from "react";
 import PostCard from "../components/Postcard";
+import { API } from "../utils/api";
 
 const Explore = () => {
   const [posts, setPosts] = useState([]);
 
-  
-  useEffect(() => {
-    const saved = JSON.parse(localStorage.getItem("peer_posts")) || [];
-    setPosts(saved);
-  }, []);
-
-  
-  useEffect(() => {
-    localStorage.setItem("peer_posts", JSON.stringify(posts));
-  }, [posts]);
-
-  
-  const handleDelete = (id) => {
-    if (window.confirm("Are you sure you want to delete this post?")) {
-      const updated = posts.filter((p) => p.id !== id);
-      setPosts(updated);
+  const fetchPosts = async () => {
+    try {
+      const res = await API.get("/api/posts/all");
+      setPosts(res.data);
+    } catch (err) {
+      console.log(err);
     }
   };
 
-  
-  const handleUpdate = (updatedPost) => {
-    const updatedPosts = posts.map((p) =>
-      p.id === updatedPost.id ? updatedPost : p
-    );
-    setPosts(updatedPosts);
+  useEffect(() => {
+    fetchPosts();
+  }, []);
+
+  // ------------------- LIKE POST -------------------
+  const handleLike = async (id) => {
+    try {
+      const token = localStorage.getItem("peer_token");
+      await API.put(
+        `/api/posts/like/${id}`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      fetchPosts();
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  // ------------------- DELETE POST -------------------
+  const handleDelete = async (id) => {
+    try {
+      const token = localStorage.getItem("peer_token");
+      await API.delete(`/api/posts/delete/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      fetchPosts();
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  // ------------------- UPDATE / EDIT POST -------------------
+  const handleUpdate = async (id, updatedData) => {
+    try {
+      const token = localStorage.getItem("peer_token");
+      await API.put(`/api/posts/update/${id}`, updatedData, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      fetchPosts();
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  // ------------------- COMMENT POST -------------------
+  const handleComment = async (id, commentText) => {
+    try {
+      const token = localStorage.getItem("peer_token");
+      await API.post(
+        `/api/posts/comment/${id}`,
+        { comment: commentText },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      fetchPosts();
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
@@ -38,17 +81,21 @@ const Explore = () => {
       </h1>
 
       {posts.length === 0 ? (
-        <p className="text-center text-gray-600">
-          No projects found. Go to "Create Project" to add one!
-        </p>
+        <p className="text-center text-gray-600">No projects found.</p>
       ) : (
         <div className="flex flex-wrap justify-center gap-6">
           {posts.map((post) => (
             <PostCard
-              key={post.id}
+              key={post._id}
               post={post}
+              onLike={handleLike}
               onDelete={handleDelete}
-              onUpdate={handleUpdate}
+              onUpdate={(updatedPost) =>
+                handleUpdate(post._id, updatedPost)
+              }
+              onComment={(commentText) =>
+                handleComment(post._id, commentText)
+              }
             />
           ))}
         </div>

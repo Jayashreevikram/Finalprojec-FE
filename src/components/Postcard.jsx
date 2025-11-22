@@ -1,45 +1,38 @@
 import React, { useState } from "react";
 
-const PostCard = ({ post, onDelete, onUpdate }) => {
+const PostCard = ({ post, onDelete, onUpdate, onLike, onComment }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedPost, setEditedPost] = useState(post);
   const [newComment, setNewComment] = useState("");
 
-  
+  /* -------------------- LIKE -------------------- */
   const handleLike = () => {
-    const updated = { ...post, likes: post.likes + 1 };
-    onUpdate(updated);
+    onLike(post._id);
   };
 
-  
+  /* -------------------- COMMENT -------------------- */
   const handleComment = (e) => {
     e.preventDefault();
     if (!newComment.trim()) return;
 
-    const updated = {
-      ...post,
-      comments: [...post.comments, newComment],
-    };
-    onUpdate(updated);
+    onComment(newComment); // Call backend
     setNewComment("");
   };
 
-  
+  /* -------------------- EDIT -------------------- */
   const handleEdit = () => {
     setIsEditing(true);
   };
 
-  
   const handleSave = () => {
     if (!editedPost.title || !editedPost.description) {
       alert("Please fill in title and description!");
       return;
     }
-    onUpdate(editedPost);
+    onUpdate(post._id, editedPost); // Send update to backend
     setIsEditing(false);
   };
 
-  
   const handleCancel = () => {
     setEditedPost(post);
     setIsEditing(false);
@@ -63,7 +56,6 @@ const PostCard = ({ post, onDelete, onUpdate }) => {
       </div>
 
       <div className="w-full md:w-2/3 p-6">
-        
         {isEditing ? (
           <textarea
             value={editedPost.description}
@@ -77,19 +69,21 @@ const PostCard = ({ post, onDelete, onUpdate }) => {
           <p className="text-gray-700 mb-3">{post.description}</p>
         )}
 
-       
+        {/* -------------------- TAGS -------------------- */}
         <div className="mb-3">
-          {(isEditing ? editedPost.tags : post.tags).map((tag, i) => (
-            <span
-              key={i}
-              className="bg-blue-100 text-blue-600 px-2 py-1 text-sm rounded-full mr-2"
-            >
-              #{tag}
-            </span>
-          ))}
+          {((isEditing ? editedPost.techStack : post.techStack) || []).map(
+            (tag, i) => (
+              <span
+                key={i}
+                className="bg-blue-100 text-blue-600 px-2 py-1 text-sm rounded-full mr-2"
+              >
+                #{tag}
+              </span>
+            )
+          )}
         </div>
 
-       
+        {/* -------------------- GITHUB LINK -------------------- */}
         {isEditing ? (
           <input
             type="text"
@@ -109,6 +103,8 @@ const PostCard = ({ post, onDelete, onUpdate }) => {
             🔗 GitHub Link
           </a>
         )}
+
+        {/* -------------------- LIKE / EDIT / DELETE -------------------- */}
         <div className="flex gap-3 mb-3">
           {!isEditing ? (
             <>
@@ -125,7 +121,7 @@ const PostCard = ({ post, onDelete, onUpdate }) => {
                 ✏️ Edit
               </button>
               <button
-                onClick={() => onDelete(post.id)}
+                onClick={() => onDelete(post._id)}
                 className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
               >
                 🗑️ Delete
@@ -149,16 +145,17 @@ const PostCard = ({ post, onDelete, onUpdate }) => {
           )}
         </div>
 
-        
+        {/* -------------------- COMMENTS -------------------- */}
         <div className="mt-3 border-t pt-3">
           <h3 className="text-md font-semibold mb-2 text-blue-700">
             💬 Comments
           </h3>
-          {post.comments.length === 0 ? (
+
+          {(post.comments || []).length === 0 ? (
             <p className="text-sm text-gray-500 mb-2">No comments yet.</p>
           ) : (
             <ul className="mb-2">
-              {post.comments.map((c, i) => (
+              {(post.comments || []).map((c, i) => (
                 <li
                   key={i}
                   className="bg-gray-100 p-2 mb-1 rounded text-sm text-left"
@@ -168,6 +165,7 @@ const PostCard = ({ post, onDelete, onUpdate }) => {
               ))}
             </ul>
           )}
+
           <form onSubmit={handleComment} className="flex gap-2">
             <input
               type="text"
