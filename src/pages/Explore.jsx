@@ -33,7 +33,7 @@ const Explore = () => {
     }
   };
 
-  // ------------------- DELETE POST -------------------
+  
   const handleDelete = async (id) => {
     try {
       const token = localStorage.getItem("peer_token");
@@ -46,7 +46,7 @@ const Explore = () => {
     }
   };
 
-  // ------------------- UPDATE / EDIT POST -------------------
+ 
   const handleUpdate = async (id, updatedData) => {
     try {
       const token = localStorage.getItem("peer_token");
@@ -59,7 +59,7 @@ const Explore = () => {
     }
   };
 
-  // ------------------- COMMENT POST -------------------
+  
   const handleComment = async (id, commentText) => {
     try {
       const token = localStorage.getItem("peer_token");

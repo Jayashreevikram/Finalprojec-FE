@@ -7,7 +7,7 @@ const Navbar = () => {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
-  // Track user state from Firebase
+  
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
@@ -17,7 +17,7 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     await signOut(auth);
-    localStorage.removeItem("peer_user"); // If you stored token
+    localStorage.removeItem("peer_user"); 
     navigate("/login");
   };
 

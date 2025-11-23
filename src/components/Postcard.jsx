@@ -5,21 +5,21 @@ const PostCard = ({ post, onDelete, onUpdate, onLike, onComment }) => {
   const [editedPost, setEditedPost] = useState(post);
   const [newComment, setNewComment] = useState("");
 
-  /* -------------------- LIKE -------------------- */
+ 
   const handleLike = () => {
     onLike(post._id);
   };
 
-  /* -------------------- COMMENT -------------------- */
+ 
   const handleComment = (e) => {
     e.preventDefault();
     if (!newComment.trim()) return;
 
-    onComment(newComment); // Call backend
+    onComment(newComment); 
     setNewComment("");
   };
 
-  /* -------------------- EDIT -------------------- */
+ 
   const handleEdit = () => {
     setIsEditing(true);
   };
@@ -29,7 +29,7 @@ const PostCard = ({ post, onDelete, onUpdate, onLike, onComment }) => {
       alert("Please fill in title and description!");
       return;
     }
-    onUpdate(post._id, editedPost); // Send update to backend
+    onUpdate(post._id, editedPost); 
     setIsEditing(false);
   };
 
@@ -69,7 +69,7 @@ const PostCard = ({ post, onDelete, onUpdate, onLike, onComment }) => {
           <p className="text-gray-700 mb-3">{post.description}</p>
         )}
 
-        {/* -------------------- TAGS -------------------- */}
+       
         <div className="mb-3">
           {((isEditing ? editedPost.techStack : post.techStack) || []).map(
             (tag, i) => (
@@ -83,7 +83,7 @@ const PostCard = ({ post, onDelete, onUpdate, onLike, onComment }) => {
           )}
         </div>
 
-        {/* -------------------- GITHUB LINK -------------------- */}
+       
         {isEditing ? (
           <input
             type="text"
@@ -104,7 +104,6 @@ const PostCard = ({ post, onDelete, onUpdate, onLike, onComment }) => {
           </a>
         )}
 
-        {/* -------------------- LIKE / EDIT / DELETE -------------------- */}
         <div className="flex gap-3 mb-3">
           {!isEditing ? (
             <>
@@ -145,7 +144,7 @@ const PostCard = ({ post, onDelete, onUpdate, onLike, onComment }) => {
           )}
         </div>
 
-        {/* -------------------- COMMENTS -------------------- */}
+       
         <div className="mt-3 border-t pt-3">
           <h3 className="text-md font-semibold mb-2 text-blue-700">
             💬 Comments

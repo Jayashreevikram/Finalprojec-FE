@@ -13,15 +13,15 @@ const Login = () => {
     try {
       const auth = getAuth(app);
 
-      // 1. Firebase login
+ 
       const userCred = await signInWithEmailAndPassword(auth, email, password);
 
-      // 2. Get ID Token
+    
       const token = await userCred.user.getIdToken();
         localStorage.setItem("peer_token", token);
 
 
-      // 3. Send to backend
+      
       await API.post(
         "/api/user/login",
         {},

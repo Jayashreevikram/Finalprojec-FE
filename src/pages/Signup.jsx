@@ -29,14 +29,12 @@ const Signup = () => {
     try {
       const auth = getAuth(app);
 
-      // Firebase signup
       const userCred = await createUserWithEmailAndPassword(
         auth,
         form.email,
         form.password
       );
 
-      // Save name in Firebase Auth
       await updateProfile(userCred.user, { displayName: form.name });
 
       const token = await userCred.user.getIdToken();
@@ -67,7 +65,7 @@ await API.post(
         </h2>
 
         <form onSubmit={handleSubmit}>
-          {/* Name */}
+         
           <input
             type="text"
             name="name"
@@ -77,7 +75,7 @@ await API.post(
             className="w-full border p-2 mb-4 rounded"
           />
 
-          {/* Email */}
+          
           <input
             type="email"
             name="email"
@@ -87,7 +85,7 @@ await API.post(
             className="w-full border p-2 mb-4 rounded"
           />
 
-          {/* Password */}
+          
           <input
             type="password"
             name="password"
@@ -97,7 +95,7 @@ await API.post(
             className="w-full border p-2 mb-4 rounded"
           />
 
-          {/* Confirm Password */}
+          
           <input
             type="password"
             name="confirmPassword"
